@@ -1,15 +1,17 @@
-const express = require('express');
+const express = require("express");
+
 const app = express();
 
-// Мидлвары для работы с JSON
 app.use(express.json());
 
-// Базовый тестовый маршрут
-app.get('/', (req, res) => {
-    res.json({ message: "API работает отлично!" });
+app.get("/", (req, res) => {
+    res.json({
+        message: "Booking System API"
+    });
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
+
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`Server started on port ${PORT}`);
 });
