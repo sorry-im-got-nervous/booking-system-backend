@@ -7,22 +7,26 @@ import {
     deleteResource
 } from "../models/resourceModel.js";
 
+// Создание нового ресурса
 export const addResource = async (req, res) => {
 
     try {
 
+        // Получаем данные из тела запроса
         const {
             name,
             description,
             type
         } = req.body;
 
+        // Проверяем обязательные поля
         if (!name || !type) {
             return res.status(400).json({
                 message: "Название и тип обязательны"
             });
         }
 
+        // Проверяем, существует ли уже ресурс с таким названием
         const existingResource = await findResourceByName(name);
 
         if (existingResource) {
@@ -31,6 +35,8 @@ export const addResource = async (req, res) => {
             });
         }
         
+        // Создаём ресурс в базе данных
+        // req.user.id — id пользователя, полученный из middleware авторизации
         const resourceId = await createResource(
             name,
             description,
@@ -55,10 +61,10 @@ export const addResource = async (req, res) => {
 
 };
 
+// Получение списка ресурсов
 export const getResources = async (req, res) => {
 
     try {
-
         const resources = await getAllResources();
 
         return res.json(resources);
@@ -75,10 +81,11 @@ export const getResources = async (req, res) => {
 
 };
 
+// Получение ресурса по id
 export const getResource = async (req, res) => {
 
     try {
-
+        // Получаем id из параметров маршрута
         const resource = await getResourceById(req.params.id);
 
         if (!resource) {
@@ -101,10 +108,11 @@ export const getResource = async (req, res) => {
 
 };
 
+//Редактирование ресурса
 export const editResource = async (req, res) => {
 
     try {
-
+        // Получаем обновляемые поля из тела запроса
         const { name, description, type, status } = req.body;
 
         const updated = await updateResource(
@@ -137,6 +145,7 @@ export const editResource = async (req, res) => {
 
 };
 
+//Удаление ресурса
 export const removeResource = async (req, res) => {
 
     try {

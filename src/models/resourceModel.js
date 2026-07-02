@@ -1,5 +1,6 @@
 import pool from "../config/db.js";
 
+// Создание нового ресурса
 export const createResource = async (
     name,
     description,
@@ -7,30 +8,39 @@ export const createResource = async (
     responsibleUserId
 ) => {
 
+    // Выполняем INSERT-запрос в таблицу resources
     const [result] = await pool.query(
         `INSERT INTO resources
         (name, description, type, responsible_user_id)
         VALUES (?, ?, ?, ?)`,
-        [name, description, type, responsibleUserId]
+        [name, description, type, responsibleUserId] // Передаём значения безопасно через плейсхолдеры
     );
 
+    // Возвращаем id созданной записи
     return result.insertId;
 
 };
 
+// Поиск ресурса по названию
 export const findResourceByName = async (name) => {
-
+    
+    // Выполняем SELECT-запрос
     const [rows] = await pool.query(
         "SELECT * FROM resources WHERE name = ?",
         [name]
     );
 
+    // Возвращаем первый найденный ресурс (или undefined)
     return rows[0];
 
 };
 
+// Получение всех ресурсов
 export const getAllResources = async () => {
 
+    // Получаем список ресурсов
+    // LEFT JOIN используется, чтобы даже если пользователь удалён,
+    // ресурс всё равно отображался
     const [rows] = await pool.query(
         `SELECT
             r.id,
@@ -48,6 +58,7 @@ export const getAllResources = async () => {
 
 };
 
+// Получение ресурса по ID
 export const getResourceById = async (id) => {
 
     const [rows] = await pool.query(
@@ -69,6 +80,7 @@ export const getResourceById = async (id) => {
 
 };
 
+// Обновление ресурса
 export const updateResource = async (
     id,
     name,
@@ -76,7 +88,7 @@ export const updateResource = async (
     type,
     status
 ) => {
-
+    // Выполняем UPDATE-запрос
     const [result] = await pool.query(
         `UPDATE resources
         SET
@@ -88,17 +100,21 @@ export const updateResource = async (
         [name, description, type, status, id]
     );
 
+    // Возвращаем количество изменённых строк
+    // (0 — если ресурс не найден)
     return result.affectedRows;
 
 };
 
+// Удаление ресурса
 export const deleteResource = async (id) => {
 
     const [result] = await pool.query(
         "DELETE FROM resources WHERE id = ?",
         [id]
     );
-
+    
+    // Возвращаем количество удалённых строк
     return result.affectedRows;
 
 };

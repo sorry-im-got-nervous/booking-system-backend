@@ -33,7 +33,7 @@ router.put(
     editResource
 );
 
-//Удвление ресурса
+//Удаление ресурса
 
 router.delete(
     "/:id",
