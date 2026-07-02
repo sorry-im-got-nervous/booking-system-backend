@@ -2,26 +2,13 @@ import express from 'express';
 import pool from './config/db.js';
 import authRoutes from "./routes/authRoutes.js";
 import authMiddleware from "./middleware/authMiddleware.js";
+import resourceRoutes from "./routes/resourceRoutes.js";
 
 const app = express();
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-
-app.get("/profile", authMiddleware, (req, res) => {
-
-    res.json({
-        message: "Доступ разрешён",
-        user: req.user
-    });
-
-});
-
-app.get("/", (req, res) => {
-    res.json({
-        message: "Booking System API"
-    });
-});
+app.use("/api/resources", resourceRoutes);
 
 const PORT = process.env.PORT || 3000;
 

@@ -9,7 +9,7 @@ CREATE TABLE users (
 
 CREATE TABLE resources (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL UNIQUE,
     description TEXT,
     type VARCHAR(50),
     responsible_user_id INT NULL,
@@ -31,7 +31,9 @@ CREATE TABLE bookings (
 
     end_time DATETIME NOT NULL,
 
-    status ENUM('active','cancelled')
+    purpose VARCHAR(255),
+
+    status ENUM('active', 'cancelled')
     DEFAULT 'active',
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
