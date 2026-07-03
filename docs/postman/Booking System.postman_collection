@@ -2,9 +2,7 @@
   "info": {
     "_postman_id": "3f74b870-7369-4d37-9999-984aa6d6e71c",
     "name": "API check",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "56251259",
-    "_collection_link": "https://go.postman.co/collection/56251259-3f74b870-7369-4d37-9999-984aa6d6e71c?source=collection_link"
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
