@@ -1,0 +1,922 @@
+{
+  "info": {
+    "_postman_id": "3f74b870-7369-4d37-9999-984aa6d6e71c",
+    "name": "API check",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56251259",
+    "_collection_link": "https://go.postman.co/collection/56251259-3f74b870-7369-4d37-9999-984aa6d6e71c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "Authentication",
+          "item": [
+            {
+              "name": "Authentificated",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "// Проверяем, что запрос прошел успешно\r",
+                      "if (pm.response.code === 200) {\r",
+                      "    const responseData = pm.response.json();\r",
+                      "\r",
+                      "    if (responseData.token) {\r",
+                      "        pm.environment.set(\"current_token\", responseData.token);\r",
+                      "        console.log(\"Токен успешно сохранён!\");\r",
+                      "    } else {\r",
+                      "        console.error(\"Токен не найден в ответе сервера.\");\r",
+                      "    }\r",
+                      "}\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"123456\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "#### Успешный вход в систему.\n\nС помощью этого запроса можно менять обычного пользователя на админа."
+              },
+              "response": []
+            },
+            {
+              "name": "Wrong password",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"user@example.com\",\r\n    \"password\": \"111111\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "#### Неверный пароль.\n\nПользователь вводит неверный пароль и система выводит предупреждение \"Неверный email или пароль\" (специально не указано, что конкретно неверно, чтобы злоумышленик не мог войти путем перебора пароля)"
+              },
+              "response": []
+            },
+            {
+              "name": "Wrong email",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"nobody@mail.ru\",\r\n    \"password\": \"123456\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "#### Неверный email.\n\nПользователь вводит неверный email и система выводит предупреждение \"Неверный email или пароль\" (специально не указано, что конкретно неверно, чтобы злоумышленик не мог войти путем перебора email)"
+              },
+              "response": []
+            }
+          ],
+          "description": "Проверка аутентификации пользователя."
+        },
+        {
+          "name": "Authorization",
+          "item": [
+            {
+              "name": "Authorized",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                },
+                "description": "Успешная авторизация"
+              },
+              "response": []
+            },
+            {
+              "name": "without token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                },
+                "description": "Попытка авторизации без аутентификации (без токена)."
+              },
+              "response": []
+            },
+            {
+              "name": "wrong token",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "abc123",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/profile",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "profile"
+                  ]
+                },
+                "description": "Попытка авторизации с неверным токеном."
+              },
+              "response": []
+            }
+          ],
+          "description": "#### Проверка авторизации пользователя.\n\nДля того, чтобы проверить работу необходимо раскомментировать функцию app.get(\"/profile\", authMiddleware, (req, res) => в app.js"
+        },
+        {
+          "name": "Registration",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"full_name\": \"Пользователь2\",\r\n    \"email\": \"user2@example.com\",\r\n    \"password\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Успешная регистрация"
+          },
+          "response": []
+        }
+      ],
+      "description": "Проверка сценариев связанных с пользователем."
+    },
+    {
+      "name": "Resources",
+      "item": [
+        {
+          "name": "Add new resource",
+          "item": [
+            {
+              "name": "Created",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Конференц-зал A\",\r\n    \"description\": \"Большой зал на 20 человек\",\r\n    \"type\": \"room\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/resources",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources"
+                  ]
+                },
+                "description": "#### **Создание нового ресурса.**\n\nВажно отметить, что создавать ресурсы можно только админу. Если авторизоваться в качестве обычного пользователя, то доступ будет запрещен."
+              },
+              "response": []
+            },
+            {
+              "name": "w/o name",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\":\"\",\r\n    \"description\": \"Без названия\",\r\n    \"type\": \"room\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/resources",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources"
+                  ]
+                },
+                "description": "#### **Ресурс без имени**\n\nПопытка создать ресурс без имени. Программа выдаст пользователю ошибку."
+              },
+              "response": []
+            },
+            {
+              "name": "w/o type",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\":\"Проверка\",\r\n    \"description\": \"Без названиятипа\",\r\n    \"type\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/resources",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources"
+                  ]
+                },
+                "description": "#### **Ресурс без типа**\n\nПопытка создать ресурс без типа. Программа выдаст пользователю ошибку."
+              },
+              "response": []
+            },
+            {
+              "name": "Unauthorized",
+              "request": {
+                "auth": {
+                  "type": "noauth"
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Конференц-зал №1\",\r\n    \"description\": \"Большой зал на 20 человек\",\r\n    \"type\": \"room\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/resources",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources"
+                  ]
+                },
+                "description": "Сценарий, где админ пытается создать ресурс, не авторизовавшись."
+              },
+              "response": []
+            }
+          ],
+          "description": "Проверка сценариев по созданию новых ресурсов.\n\n!! Доступно только админу."
+        },
+        {
+          "name": "Get resource",
+          "item": [
+            {
+              "name": "All resources",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/resources",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources"
+                  ]
+                },
+                "description": "Просмотр всех ресурсов."
+              },
+              "response": []
+            },
+            {
+              "name": "One resource",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/resources/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "resources",
+                    "2"
+                  ]
+                },
+                "description": "#### Просмотр одного ресурса.\n\nПросмотр одного конкретного ресурса по id"
+              },
+              "response": []
+            }
+          ],
+          "description": "Просмотр ресурсов"
+        },
+        {
+          "name": "Edit",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"Конференц-зал А\",\r\n    \"description\":\"Обновленное описание\",\r\n    \"type\":\"room\",\r\n    \"status\":\"active\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/resources/2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "resources",
+                "2"
+              ]
+            },
+            "description": "#### **Редактирование ресурса.**\n\n**Редактировать** ресурсы можно только админу. Если авторизоваться в качестве обычного пользователя, то доступ будет запрещен."
+          },
+          "response": []
+        }
+      ],
+      "description": "Проверка всех сценариев связанных с ресурсами."
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Add new booking",
+          "item": [
+            {
+              "name": "Nonexistent resource",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 99999,\r\n    \"start_time\": \"2026-07-20 10:00:00\",\r\n    \"end_time\": \"2026-07-20 12:00:00\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Попытка забронировать несуществующий ресурс."
+              },
+              "response": []
+            },
+            {
+              "name": "Wrong time",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 2,\r\n    \"start_time\": \"2026-07-20 15:00:00\",\r\n    \"end_time\": \"2026-07-20 14:00:00\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Бронирование, где время начала раньше времени окончания."
+              },
+              "response": []
+            },
+            {
+              "name": "Booked",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 4,\r\n    \"start_time\": \"2026-07-13 10:00:00\",\r\n    \"end_time\": \"2026-07-13 12:00:00\",\r\n    \"purpose\": \"Совещание отдела\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Успешное бронирование"
+              },
+              "response": []
+            },
+            {
+              "name": "Too short",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 4,\r\n    \"start_time\": \"2026-07-22 10:00:00\",\r\n    \"end_time\": \"2026-07-22 10:01:00\",\r\n    \"purpose\": \"Совещание отдела\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Попытка забронировать ресурс на слишком непродолжительное время."
+              },
+              "response": []
+            },
+            {
+              "name": "Inactive resource",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 5,\r\n    \"start_time\": \"2026-07-19 10:00:00\",\r\n    \"end_time\": \"2026-07-19 12:00:00\",\r\n    \"purpose\": \"Совещание отдела\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Попытка забронировать недоступный (неактивный) ресурс."
+              },
+              "response": []
+            },
+            {
+              "name": "Past",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 4,\r\n    \"start_time\": \"2010-07-19 10:00:00\",\r\n    \"end_time\": \"2010-07-19 12:00:00\",\r\n    \"purpose\": \"Совещание отдела\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "Попытка забронировать ресурс на прошедшее время"
+              },
+              "response": []
+            },
+            {
+              "name": "Double-booking",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 2,\r\n    \"start_time\": \"2026-07-20 11:00:00\",\r\n    \"end_time\": \"2026-07-20 13:00:00\",\r\n    \"purpose\": \"Другая встреча\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "#### Пересечение бронирования.\n\nВажно проверить, чтобы не было повторного бронирования на то же время."
+              },
+              "response": []
+            },
+            {
+              "name": "Consecutive",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"resource_id\": 2,\r\n    \"start_time\": \"2026-07-20 12:00:00\",\r\n    \"end_time\": \"2026-07-20 14:00:00\",\r\n    \"purpose\": \"Новая встреча\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "#### **Два бронирования подряд.**\n\nПроверка сценария, где одно бронирование идет сразу вслед за другим."
+              },
+              "response": []
+            }
+          ],
+          "description": "Папка с проверкой на добавление бронирования"
+        },
+        {
+          "name": "View booking",
+          "item": [
+            {
+              "name": "My bookings",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bookings/my",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings",
+                    "my"
+                  ]
+                },
+                "description": "#### Просмотр списка всех бронирований пользователя."
+              },
+              "response": []
+            },
+            {
+              "name": "All bookings",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{current_token}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/bookings",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "bookings"
+                  ]
+                },
+                "description": "#### **Просмотр всех существующих бронирований.**\n\nНужно попробовать запросить все бронирования, зайдя в аккаунт обычного пользователя (выдаст ошибку) и в аккаунт админа"
+              },
+              "response": []
+            }
+          ],
+          "description": "Просмотр бронирования"
+        },
+        {
+          "name": "Cancel",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{current_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/bookings/3/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "bookings",
+                "3",
+                "cancel"
+              ]
+            },
+            "description": "#### **Отмена бронирования.**\n\nЗдесь важно сделать несколько проверок, не меняя запрос:\n\n1. Успешная отмена бронирования.\n    \n2. Повторная отмена: нужно отменить уже отмененную бронь.\n    \n3. Попытка отменить чужое бронирование: нужно войти под другим пользователем и попробовать отменить чужую бронь.\n    \n4. Администратор отменяет чужую бронь."
+          },
+          "response": []
+        }
+      ],
+      "description": "Проверка всех сценариев связанных с бронированием."
+    }
+  ],
+  "variable": [
+    {
+      "key": "supabase_service_role_api_key_0syz",
+      "secret": true
+    }
+  ]
+}
