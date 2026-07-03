@@ -4,7 +4,6 @@ import {
     getAllResources,
     getResourceById,
     updateResource,
-    deleteResource
 } from "../models/resourceModel.js";
 
 // Создание нового ресурса
@@ -131,35 +130,6 @@ export const editResource = async (req, res) => {
 
         return res.json({
             message: "Ресурс обновлён"
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        return res.status(500).json({
-            message: "Ошибка сервера"
-        });
-
-    }
-
-};
-
-//Удаление ресурса
-export const removeResource = async (req, res) => {
-
-    try {
-
-        const deleted = await deleteResource(req.params.id);
-
-        if (!deleted) {
-            return res.status(404).json({
-                message: "Ресурс не найден"
-            });
-        }
-
-        return res.json({
-            message: "Ресурс удалён"
         });
 
     } catch (error) {

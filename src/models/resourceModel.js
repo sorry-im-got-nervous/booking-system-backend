@@ -105,16 +105,3 @@ export const updateResource = async (
     return result.affectedRows;
 
 };
-
-// Удаление ресурса
-export const deleteResource = async (id) => {
-
-    const [result] = await pool.query(
-        "DELETE FROM resources WHERE id = ?",
-        [id]
-    );
-    
-    // Возвращаем количество удалённых строк
-    return result.affectedRows;
-
-};

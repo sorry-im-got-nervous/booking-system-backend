@@ -6,8 +6,7 @@ import {
     addResource,
     getResources,
     getResource,
-    editResource,
-    removeResource
+    editResource
 } from "../controllers/resourceController.js";
 
 const router = express.Router();
@@ -31,15 +30,6 @@ router.put(
     authMiddleware,
     adminMiddleware,
     editResource
-);
-
-//Удаление ресурса
-
-router.delete(
-    "/:id",
-    authMiddleware,
-    adminMiddleware,
-    removeResource
 );
 
 export default router;
