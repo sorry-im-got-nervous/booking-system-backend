@@ -6,7 +6,8 @@ import {
     addResource,
     getResources,
     getResource,
-    editResource
+    editResource,
+    getSchedule
 } from "../controllers/resourceController.js";
 
 const router = express.Router();
@@ -23,6 +24,14 @@ router.post(
 router.get("/", authMiddleware, getResources);
 //Получение одного ресурса по id
 router.get("/:id", authMiddleware, getResource);
+
+//Получение расписания
+router.get(
+    "/:id/schedule",
+    authMiddleware,
+    getSchedule
+);
+
 
 //Изменение ресурса
 router.put(

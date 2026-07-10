@@ -9,6 +9,8 @@ import {
     cancelBooking
 } from "../models/bookingModel.js";
 
+import { createNotification } from "../models/notificationModel.js";
+
 export const addBooking = async (req, res) => {
 
     try {
@@ -87,6 +89,12 @@ export const addBooking = async (req, res) => {
             purpose
         );
 
+        await createNotification(
+            req.user.id,
+            "Бронирование создано",
+            `Ваше бронирование ресурса №${resource_id} успешно создано.`
+        );
+
         return res.status(201).json({
             message: "Бронирование успешно создано",
             bookingId
@@ -153,15 +161,16 @@ export const cancelUserBooking = async (req, res) => {
 
         const booking = await getBookingById(req.params.id);
         
-        if (booking.status === "cancelled") {
-            return res.status(400).json({
-                message: "Бронирование уже отменено"
-            });
-        }
-
+        // СНАЧАЛА проверяем, что бронирование вообще существует
         if (!booking) {
             return res.status(404).json({
                 message: "Бронирование не найдено"
+            });
+        }
+        
+        if (booking.status === "cancelled") {
+            return res.status(400).json({
+                message: "Бронирование уже отменено"
             });
         }
 
@@ -175,6 +184,12 @@ export const cancelUserBooking = async (req, res) => {
         }
 
         await cancelBooking(req.params.id);
+
+        await createNotification(
+            booking.user_id,
+            "Бронирование отменено",
+            `Бронирование №${booking.id} было отменено.`
+        );
 
         return res.json({
             message: "Бронирование отменено"

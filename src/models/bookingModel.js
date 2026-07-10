@@ -132,3 +132,36 @@ export const cancelBooking = async (id) => {
     return result.affectedRows;
 
 };
+
+export const getResourceSchedule = async (resourceId, date = null) => {
+
+    let query = `
+        SELECT
+            id,
+            start_time,
+            end_time,
+            purpose,
+            'busy' AS status
+        FROM bookings
+        WHERE resource_id = ?
+        AND status = 'active'
+    `;
+
+    const params = [resourceId];
+
+    if (date) {
+        query += `
+            AND DATE(start_time) = ?
+        `;
+        params.push(date);
+    }
+
+    query += `
+        ORDER BY start_time ASC
+    `;
+
+    const [rows] = await pool.query(query, params);
+
+    return rows;
+
+};

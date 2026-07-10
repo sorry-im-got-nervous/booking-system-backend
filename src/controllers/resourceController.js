@@ -6,6 +6,8 @@ import {
     updateResource,
 } from "../models/resourceModel.js";
 
+import { getResourceSchedule } from "../models/bookingModel.js";
+
 // Создание нового ресурса
 export const addResource = async (req, res) => {
 
@@ -131,6 +133,44 @@ export const editResource = async (req, res) => {
         return res.json({
             message: "Ресурс обновлён"
         });
+
+    } catch (error) {
+
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Ошибка сервера"
+        });
+
+    }
+
+};
+
+export const getSchedule = async (req, res) => {
+
+    try {
+
+        const resource = await getResourceById(req.params.id);
+
+        if (!resource) {
+            return res.status(404).json({
+                message: "Ресурс не найден"
+            });
+        }
+
+        const schedule = await getResourceSchedule(
+            req.params.id,
+            req.query.date
+        );
+
+        if (schedule.length === 0) {
+            return res.json({
+                message: "На выбранную дату ресурс свободен",
+                schedule: []
+            });
+        }
+
+        return res.json(schedule);
 
     } catch (error) {
 
