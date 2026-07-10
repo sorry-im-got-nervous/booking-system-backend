@@ -24,3 +24,11 @@ export const createUser = async (fullName, email, passwordHash) => {
     // Возвращаем id созданного пользователя
     return result.insertId;
 };
+
+//Функция для удаления тестовых пользователей
+export const deleteUserByEmail = async (email) => {
+    await pool.query(
+        "DELETE FROM users WHERE email = ?",
+        [email]
+    );
+};
